@@ -20,6 +20,7 @@ type DarwinProcess struct {
 	pid    int
 	ppid   int
 	binary string
+	path   string
 }
 
 func (p *DarwinProcess) Pid() int {
@@ -32,6 +33,10 @@ func (p *DarwinProcess) PPid() int {
 
 func (p *DarwinProcess) Executable() string {
 	return p.binary
+}
+
+func (p *DarwinProcess) Path() string {
+	return p.path
 }
 
 // bufSize references the constant that the implementation
@@ -99,11 +104,14 @@ func processes() ([]Process, error) {
 	darwinProcs := make([]Process, len(procs))
 	for i, p := range procs {
 		comm, err := getExePathFromPid(int(p.Pid))
+		var path string
 
 		if err != nil {
 			// Falls back to the kinfo_proc->kp_proc.p_comm if no string for the pid was found
 			comm = darwinCstring(p.Comm)
+			path = comm
 		} else {
+			path = comm
 			// returns the last element of the process execution path
 			comm = filepath.Base(comm)
 		}
@@ -112,6 +120,7 @@ func processes() ([]Process, error) {
 			pid:    int(p.Pid),
 			ppid:   int(p.PPid),
 			binary: comm,
+			path:   path,
 		}
 	}
 
