@@ -76,7 +76,7 @@ func newWindowsProcess(e *PROCESSENTRY32) *WindowsProcess {
 		pid:  int(e.ProcessID),
 		ppid: int(e.ParentProcessID),
 		exe:  syscall.UTF16ToString(e.ExeFile[:end]),
-		path: syscall.UTF16ToString(e.ExeFile)
+		path: syscall.UTF16ToString(e.ExeFile),
 	}
 }
 
