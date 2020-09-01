@@ -43,6 +43,7 @@ type WindowsProcess struct {
 	pid  int
 	ppid int
 	exe  string
+	path string
 }
 
 func (p *WindowsProcess) Pid() int {
@@ -55,6 +56,10 @@ func (p *WindowsProcess) PPid() int {
 
 func (p *WindowsProcess) Executable() string {
 	return p.exe
+}
+
+func (p *WindowsProcess) Path() string {
+	return p.path
 }
 
 func newWindowsProcess(e *PROCESSENTRY32) *WindowsProcess {
@@ -71,6 +76,7 @@ func newWindowsProcess(e *PROCESSENTRY32) *WindowsProcess {
 		pid:  int(e.ProcessID),
 		ppid: int(e.ParentProcessID),
 		exe:  syscall.UTF16ToString(e.ExeFile[:end]),
+		path: syscall.UTF16ToString(e.ExeFile)
 	}
 }
 
